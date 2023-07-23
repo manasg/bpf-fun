@@ -1,1 +1,1 @@
-clear; g++ hello.cpp && ./a.out 2 5000
+g++ hello.cpp -o bin/hello && ./bin/hello 2 500
