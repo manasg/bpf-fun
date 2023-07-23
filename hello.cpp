@@ -15,11 +15,12 @@ int main()
   int n = 20;
   for (std::size_t i = 0; i < n; ++i)
     {
-      const auto start = std::chrono::steady_clock::now();
+      auto start = std::chrono::high_resolution_clock::now();
       std::cout << "entering critical\n";
       critical();
       std::cout << "out of critical\n\n";
-      const auto end = std::chrono::steady_clock::now();
-      std::cout << "Waited " << 5 << '\n';
+      auto end = std::chrono::high_resolution_clock::now();
+      auto duration = duration_cast<microseconds>(stop - start);
+      std::cout << "Waited " << duration.count() << '\n';
     }
 }
