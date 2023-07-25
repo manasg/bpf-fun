@@ -3,19 +3,22 @@ from bcc import BPF
 
 program = r"""
 
-void static loop() {
-    u64 sleep_ns = 5;
-    u64 start = bpf_ktime_get_ns();
-    u64 now = start;
+struct callback_ctx {
+	int output;
+};
 
-    while(now < (start + sleep_ns)) {
-        now = bpf_ktime_get_ns();
-    }
+
+static int empty_callback(__u32 index, void *data) {
+	return 0;
 }
 
 int hello(void *ctx) {
+    struct callback_ctx data = {};
+    u32 loops = 2;
+    u32 nr_loops_returned = 0;
+    
     bpf_trace_printk("hii");
-    loop();
+    nr_loops_returned = bpf_loop(loops, empty_callback, NULL, 0);
     return 0;
 }
 """
