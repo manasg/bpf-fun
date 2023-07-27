@@ -1,0 +1,38 @@
+bpf: Failed to load program: Permission denied
+reg type unsupported for arg#0 function hello#4
+0: R1=ctx(off=0,imm=0) R10=fp0
+; int hello(void *ctx) {
+0: (b7) r1 = 1                        ; R1_w=1
+; d.x = 1;
+1: (63) *(u32 *)(r10 -8) = r1         ; R1_w=1 R10=fp0 fp-8=1
+2: (b7) r1 = 6908264                  ; R1_w=6908264
+; ({ char _fmt[] = "hii"; bpf_trace_printk_(_fmt, sizeof(_fmt)); });
+3: (63) *(u32 *)(r10 -12) = r1        ; R1_w=6908264 R10=fp0 fp-16=mmmm????
+4: (bf) r1 = r10                      ; R1_w=fp0 R10=fp0
+; 
+5: (07) r1 += -12                     ; R1_w=fp-12
+; ({ char _fmt[] = "hii"; bpf_trace_printk_(_fmt, sizeof(_fmt)); });
+6: (b7) r2 = 4                        ; R2_w=4
+7: (85) call bpf_trace_printk#6       ; R0_w=scalar()
+8: (bf) r3 = r10                      ; R3_w=fp0 R10=fp0
+; 
+9: (07) r3 += -8                      ; R3_w=fp-8
+; nr_loops_returned = bpf_loop(loops, empty_callback, &d, 0);
+10: (b7) r1 = 2                       ; R1_w=2
+11: (18) r2 = 0x0                     ; R2_w=0
+13: (b7) r4 = 0                       ; R4_w=0
+14: (85) call bpf_loop#181
+R2 type=scalar expected=func
+processed 14 insns (limit 1000000) max_states_per_insn 0 total_states 0 peak_states 0 mark_read 0
+
+Traceback (most recent call last):
+  File "/home/manas/repos/cpp/bpf-uprobe.py", line 29, in <module>
+    b.attach_uprobe(name="bin/hello", sym_re=".*make_me_slow.*", fn_name="hello")
+  File "/usr/lib/python3.11/site-packages/bcc/__init__.py", line 1357, in attach_uprobe
+    self.attach_uprobe(name=name, addr=sym_addr,
+  File "/usr/lib/python3.11/site-packages/bcc/__init__.py", line 1364, in attach_uprobe
+    fn = self.load_func(fn_name, BPF.KPROBE)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/site-packages/bcc/__init__.py", line 522, in load_func
+    raise Exception("Failed to load BPF program %s: %s" %
+Exception: Failed to load BPF program b'hello': Permission denied
